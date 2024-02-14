@@ -262,9 +262,9 @@ def get_payments_log():
 
 # Get all merchant log
 @app.route('/log/merchant', methods=['GET'])
-def get_payments_log():
+def get_merchant_log():
     try:
-        query = text("SELECT action, username, email, password, no_rek,changed_at FROM trx_merchant_log;")
+        query = text("SELECT action, username, email, password, no_rek,changed_at FROM ms_merchant_log;")
         result = db.session.execute(query)
         result_array = [row for row in result]
 
@@ -276,3 +276,20 @@ def get_payments_log():
         return jsonify(result_dicts), 200
     except Exception as e:        
         return jsonify({'error': 'Failed to retrieve merchant logs', 'details': str(e)}), 500
+
+# Get all customer log
+@app.route('/log/customer', methods=['GET'])
+def get_customer_log():
+    try:
+        query = text("SELECT action, username, email, password, no_rek,changed_at FROM ms_customer_log;")
+        result = db.session.execute(query)
+        result_array = [row for row in result]
+
+        result_dicts = [{'action': row[0],'username': row[1], 'email': row[2], 'password' : row[3],'no_rek' : row[4],'changed_at' : row[5]} for row in result_array]
+
+        if not result_dicts:            
+            return jsonify([]), 200 
+        
+        return jsonify(result_dicts), 200
+    except Exception as e:        
+        return jsonify({'error': 'Failed to retrieve customer logs', 'details': str(e)}), 500
