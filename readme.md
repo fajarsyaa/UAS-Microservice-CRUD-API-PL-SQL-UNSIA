@@ -27,7 +27,7 @@ Untuk menyiapkan Aplikasi Sistem Pembayaran, ikuti langkah-langkah ini:
 1. **Clone Repository:** 
    - Clone repository dari GitHub menggunakan perintah berikut:
      ```
-     git clone <repository-url>
+     git clone https://github.com/fajarsyaa/UAS-Microservice-CRUD-API-PL-SQL-UNSIA.git
      ```
    
 2. **Instal Dependensi:**
