@@ -38,6 +38,9 @@ def decrypt_password(encrypted_password):
 # add merchant
 @app.route('/merchant', methods=['POST'])
 def create_merchant():
+    if check_login(session.get('customer')):
+        return jsonify({'error': 'Login Already'}), 403
+
     data = request.get_json()
     username = data.get('username')
     email = data.get('email')
@@ -62,6 +65,9 @@ def create_merchant():
 # Get all merchant
 @app.route('/merchant', methods=['GET'])
 def get_merchants():
+    if check_login(session.get('customer')):
+        return jsonify({'error': 'Login Already'}), 403
+
     try:
         query = text("SELECT id, username, email, no_rek FROM ms_merchant")
         result = db.session.execute(query)
@@ -80,6 +86,9 @@ def get_merchants():
 # Update merchant
 @app.route('/merchant/<int:id>', methods=['PUT'])
 def update_merchant(id):
+    if check_login(session.get('customer')):
+        return jsonify({'error': 'Login Already'}), 403
+
     data = request.get_json()
     username = data.get('username')
     email = data.get('email')
@@ -103,6 +112,9 @@ def update_merchant(id):
 # Delete merchant
 @app.route('/merchant/<int:id>', methods=['DELETE'])
 def delete_merchant(id):
+    if check_login(session.get('customer')):
+        return jsonify({'error': 'Login Already'}), 403
+
     try:
         query = text("DELETE FROM ms_merchant WHERE id=:id")
         db.session.execute(query,  {'id': id})
@@ -111,3 +123,29 @@ def delete_merchant(id):
     except Exception as e:
         return jsonify({'error': 'Failed to delete merchant', 'details': str(e)}), 500
 
+
+@app.route('/login/customer', methods=['POST'])
+def login():
+    if check_login(session.get('customer')):
+        return jsonify({'error': 'Login Already'}), 403
+
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if not (email and password):
+        return jsonify({'error': 'Incomplete data provided'}), 400    
+
+    try:
+        customer = Customer.query.filter_by(email=email).first()
+        if customer:    
+            if password == decrypt_password(customer.password):  
+                session['customer'] = customer.username                         
+                session['level'] = "merchant"
+                return jsonify({'message': 'Login successful'}), 200
+            else:                
+                return jsonify({'error': 'Incorrect password'}), 401
+        else:            
+            return jsonify({'error': 'Customer not registered'}), 404
+    except SQLAlchemyError as e:        
+        return jsonify({'error': 'Database error'}), 500
