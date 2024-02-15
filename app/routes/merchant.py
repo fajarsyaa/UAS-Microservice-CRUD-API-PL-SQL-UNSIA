@@ -23,6 +23,7 @@ def encrypt_password(password):
 
 # Fungsi untuk mendekripsi password menggunakan AES
 def decrypt_password(encrypted_password):
+    key = os.urandom(16)
     ciphertext = base64.b64decode(encrypted_password.encode())
     backend = default_backend()
     iv = ciphertext[:16]
