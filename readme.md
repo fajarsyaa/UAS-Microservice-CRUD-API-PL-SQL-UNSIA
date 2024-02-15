@@ -33,6 +33,7 @@ Untuk menyiapkan Aplikasi Sistem Pembayaran, ikuti langkah-langkah ini:
 2. **Instal Dependensi:**
    - Lalu pastikan masuk ke direktori proyek dan instal dependensi yang diperlukan menggunakan:
      ```
+     cd <nama project hasil clone>
      pip install -r requirements.txt
      ```
    
