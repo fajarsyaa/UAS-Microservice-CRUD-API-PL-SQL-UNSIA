@@ -1,18 +1,15 @@
-from flask import jsonify, request
+from flask import jsonify, request, Flask, session
 from app import app, db
-from app.models import Customer, Merchant, Transaction
 from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError
-from cryptography.hazmat.primitives import padding
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
-import base64
-import os
+from app.middleware.loginMiddleware import check_login_customer
 
 
 # add payment
 @app.route('/payment', methods=['POST'])
 def create_payment():
+    if check_login_customer(session.get('customer'),session.get('level')) : 
+       return jsonify({'error': 'Access Forbidden'}), 403 
+    
     data = request.get_json()
     customer_id = data.get('customer_id')
     merchant_id = data.get('merchant_id')
@@ -34,6 +31,9 @@ def create_payment():
 # Get  payment
 @app.route('/payment/<int:id>', methods=['GET'])
 def get_payments_id(id):
+    if check_login_customer(session.get('customer'),session.get('level')) : 
+       return jsonify({'error': 'Access Forbidden'}), 403 
+    
     try:
         query = text("SELECT tp.id, mm.username, mc.username, tp.amount FROM trx_payment tp JOIN ms_customer mc ON tp.customer_id = mc.id JOIN ms_merchant mm ON tp.merchant_id = mm.id WHERE tp.id = :id;")
         result = db.session.execute(query,{'id': id})

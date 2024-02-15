@@ -3,7 +3,7 @@ from hashlib import sha256
 from base64 import b64encode, b64decode
 from app import app, db
 from app.models import Customer, Merchant, Transaction
-from app.middleware import loginMiddleware
+from app.middleware.loginMiddleware import check_login_customer, check_login
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from cryptography.hazmat.backends import default_backend
@@ -35,9 +35,6 @@ def decrypt_password(ciphertext):
 # add customer
 @app.route('/customer', methods=['POST'])
 def create_customer():
-    if check_login_customer(session.get('customer'),session.get('level')) : 
-       return jsonify({'error': 'Access Forbidden'}), 403 
-
     data = request.get_json()
     username = data.get('username')
     email = data.get('email')
@@ -62,7 +59,7 @@ def create_customer():
 # Get all customer
 @app.route('/customer', methods=['GET'])
 def get_customers():
-    if check_login_customer(session.get('customer'),session.get('level')) : 
+    if check_login_customer(session.get('user'),session.get('level')) : 
        return jsonify({'error': 'Access Forbidden'}), 403 
 
     try:
@@ -83,7 +80,7 @@ def get_customers():
 # Update customer
 @app.route('/customer/<int:id>', methods=['PUT'])
 def update_customer(id):
-    if check_login_customer(session.get('customer'),session.get('level')) : 
+    if check_login_customer(session.get('user'),session.get('level')) : 
        return jsonify({'error': 'Access Forbidden'}), 403 
     
     data = request.get_json()
@@ -109,7 +106,7 @@ def update_customer(id):
 # Delete customer
 @app.route('/customer/<int:id>', methods=['DELETE'])
 def delete_customer(id):
-    if check_login_customer(session.get('customer'),session.get('level')) : 
+    if check_login_customer(session.get('user'),session.get('level')) : 
        return jsonify({'error': 'Access Forbidden'}), 403 
 
     try:
@@ -122,8 +119,8 @@ def delete_customer(id):
 
 
 @app.route('/login/customer', methods=['POST'])
-def login():
-    if check_login(session.get('customer')):
+def login_customer():
+    if check_login(session.get('user')):
         return jsonify({'error': 'Login Already'}), 403
 
     data = request.get_json()
@@ -137,7 +134,7 @@ def login():
         customer = Customer.query.filter_by(email=email).first()
         if customer:    
             if password == decrypt_password(customer.password):  
-                session['customer'] = customer.username                         
+                session['user'] = customer.username                         
                 session['level'] = "customer"
                 return jsonify({'message': 'Login successful'}), 200
             else:                
@@ -146,3 +143,9 @@ def login():
             return jsonify({'error': 'Customer not registered'}), 404
     except SQLAlchemyError as e:        
         return jsonify({'error': 'Database error'}), 500
+    
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'message': 'Logout'}), 200    

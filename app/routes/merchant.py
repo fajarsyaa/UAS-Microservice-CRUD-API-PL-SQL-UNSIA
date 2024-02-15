@@ -1,46 +1,40 @@
-from flask import jsonify, request
+from flask import jsonify, request, Flask, session
+from hashlib import sha256
+from base64 import b64encode, b64decode
 from app import app, db
 from app.models import Customer, Merchant, Transaction
+from app.middleware.loginMiddleware import check_login_merchant, check_login
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
-from cryptography.hazmat.primitives import padding
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-import base64
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad, unpad
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
-# Fungsi untuk mengenkripsi password menggunakan AES
-def encrypt_password(password):
-    key = os.urandom(16)
-    backend = default_backend()
-    iv = os.urandom(16)
-    padder = padding.PKCS7(128).padder()
-    padded_data = padder.update(password.encode()) + padder.finalize()
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
-    encryptor = cipher.encryptor()
-    ciphertext = encryptor.update(padded_data) + encryptor.finalize()
-    return base64.b64encode(ciphertext).decode()
+# key = os.urandom(16)
+key = sha256(os.urandom(32)).digest()
 
-# Fungsi untuk mendekripsi password menggunakan AES
-def decrypt_password(encrypted_password):
-    key = os.urandom(16)
-    ciphertext = base64.b64decode(encrypted_password.encode())
-    backend = default_backend()
-    iv = ciphertext[:16]
-    cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=backend)
-    decryptor = cipher.decryptor()
-    padded_data = decryptor.update(ciphertext[16:]) + decryptor.finalize()
-    unpadder = padding.PKCS7(128).unpadder()
-    password = unpadder.update(padded_data) + unpadder.finalize()
-    return password.decode()
+def encrypt_password(plaintext):
+    iv = os.urandom(16)    
+    cipher = AES.new(key, AES.MODE_CFB, iv=iv)
+    ciphertext = cipher.encrypt(pad(plaintext.encode(), AES.block_size))
+    return b64encode(iv + ciphertext).decode()
+
+def decrypt_password(ciphertext):    
+    ciphertext = b64decode(ciphertext.encode())    
+    iv = ciphertext[:16]    
+    ciphertext = ciphertext[16:]    
+    cipher = AES.new(key, AES.MODE_CFB, iv=iv)
+    plaintext = unpad(cipher.decrypt(ciphertext), AES.block_size).decode()
+    return plaintext
 
 
 # add merchant
 @app.route('/merchant', methods=['POST'])
 def create_merchant():
-    if check_login(session.get('customer')):
-        return jsonify({'error': 'Login Already'}), 403
-
     data = request.get_json()
     username = data.get('username')
     email = data.get('email')
@@ -65,8 +59,8 @@ def create_merchant():
 # Get all merchant
 @app.route('/merchant', methods=['GET'])
 def get_merchants():
-    if check_login(session.get('customer')):
-        return jsonify({'error': 'Login Already'}), 403
+    if check_login_merchant(session.get('user'),session.get('level')) : 
+       return jsonify({'error': 'Access Forbidden'}), 403 
 
     try:
         query = text("SELECT id, username, email, no_rek FROM ms_merchant")
@@ -86,8 +80,8 @@ def get_merchants():
 # Update merchant
 @app.route('/merchant/<int:id>', methods=['PUT'])
 def update_merchant(id):
-    if check_login(session.get('customer')):
-        return jsonify({'error': 'Login Already'}), 403
+    if check_login_merchant(session.get('user'),session.get('level')) : 
+       return jsonify({'error': 'Access Forbidden'}), 403 
 
     data = request.get_json()
     username = data.get('username')
@@ -112,8 +106,8 @@ def update_merchant(id):
 # Delete merchant
 @app.route('/merchant/<int:id>', methods=['DELETE'])
 def delete_merchant(id):
-    if check_login(session.get('customer')):
-        return jsonify({'error': 'Login Already'}), 403
+    if check_login_merchant(session.get('user'),session.get('level')) : 
+       return jsonify({'error': 'Access Forbidden'}), 403 
 
     try:
         query = text("DELETE FROM ms_merchant WHERE id=:id")
@@ -124,9 +118,9 @@ def delete_merchant(id):
         return jsonify({'error': 'Failed to delete merchant', 'details': str(e)}), 500
 
 
-@app.route('/login/customer', methods=['POST'])
-def login():
-    if check_login(session.get('customer')):
+@app.route('/login/merchant', methods=['POST'])
+def login_merchant():
+    if check_login(session.get('user')):
         return jsonify({'error': 'Login Already'}), 403
 
     data = request.get_json()
@@ -137,10 +131,10 @@ def login():
         return jsonify({'error': 'Incomplete data provided'}), 400    
 
     try:
-        customer = Customer.query.filter_by(email=email).first()
-        if customer:    
-            if password == decrypt_password(customer.password):  
-                session['customer'] = customer.username                         
+        merchant = Merchant.query.filter_by(email=email).first()
+        if merchant:    
+            if password == decrypt_password(merchant.password):  
+                session['user'] = merchant.username                         
                 session['level'] = "merchant"
                 return jsonify({'message': 'Login successful'}), 200
             else:                
