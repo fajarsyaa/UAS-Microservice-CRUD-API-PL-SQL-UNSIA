@@ -2,7 +2,7 @@ from flask import jsonify, request, Flask, session
 from hashlib import sha256
 from base64 import b64encode, b64decode
 from app import app, db
-from app.models import Customer, Merchant, Transaction
+from app.models import  Merchant
 from app.middleware.loginMiddleware import check_login_merchant, check_login
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
