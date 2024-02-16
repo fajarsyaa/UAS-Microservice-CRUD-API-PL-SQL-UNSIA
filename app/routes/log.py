@@ -1,13 +1,7 @@
 from flask import jsonify, request
 from app import app, db
-from app.models import Customer, Merchant, Transaction
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
-from cryptography.hazmat.primitives import padding
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
-import base64
-import os
 
 
 # Get all payment log

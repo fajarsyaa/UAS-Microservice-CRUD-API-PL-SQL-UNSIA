@@ -193,4 +193,8 @@ Atau jika anda ingin yang lebih simple, anda bisa mengimport collection postman 
 
 ### Kesimpulan
 
-Aplikasi Sistem Pembayaran sederhana ini dibangun untuk menyelesaikan tugas UAS mata kuliah Pemrograman PL/SQL. Universitas Siber Asia
+Aplikasi Sistem Pembayaran sederhana ini dibangun untuk menyelesaikan tugas UAS mata kuliah Pemrograman PL/SQL  Universitas Siber Asia yang dikerjakan secara berkelompok dengan nama kelompok : 
+1. Mukhamad Fajar Syaihu Walid
+2. RAFI ANDHIKA GALUH
+3. NAH’L ADDINIYAH HASANAH
+4. Muh.Wildan Fiqri Ali

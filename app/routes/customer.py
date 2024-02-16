@@ -11,7 +11,6 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
-from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 # key = os.urandom(16)
