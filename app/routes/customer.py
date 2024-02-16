@@ -13,7 +13,6 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import os
 
-# key = os.urandom(16)
 key = sha256(os.urandom(32)).digest()
 
 def encrypt_password(plaintext):
@@ -62,11 +61,11 @@ def get_customers():
        return jsonify({'error': 'Access Forbidden'}), 403 
 
     try:
-        query = text("SELECT id, username, email, no_rek, password FROM ms_customer")
+        query = text("SELECT id, username, email, no_rek FROM ms_customer")
         result = db.session.execute(query)
         result_array = [row for row in result]
 
-        result_dicts = [{'id': row[0],'username': row[1], 'email': row[2], 'no_rek' : row[3],'password' : row[4]} for row in result_array]
+        result_dicts = [{'id': row[0],'username': row[1], 'email': row[2], 'no_rek' : row[3]} for row in result_array]
 
         if not result_dicts:            
             return jsonify([]), 200 
@@ -116,7 +115,7 @@ def delete_customer(id):
     except Exception as e:
         return jsonify({'error': 'Failed to delete customer', 'details': str(e)}), 500
 
-
+# login customer
 @app.route('/login/customer', methods=['POST'])
 def login_customer():
     if check_login(session.get('user')):
@@ -143,8 +142,9 @@ def login_customer():
     except SQLAlchemyError as e:        
         return jsonify({'error': 'Database error'}), 500
     
-
+# logout
 @app.route('/logout', methods=['POST'])
 def logout():
-    session.clear()
+    session.pop('user', None)
+    session.pop('level', None)
     return jsonify({'message': 'Logout'}), 200    

@@ -13,7 +13,6 @@ from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 import os
 
-# key = os.urandom(16)
 key = sha256(os.urandom(32)).digest()
 
 def encrypt_password(plaintext):
@@ -91,8 +90,7 @@ def update_merchant(id):
     if not (username and email and password and no_rek):
         return jsonify({'error': 'Incomplete data provided'}), 400
 
-    try:
-        # Enkripsi password baru
+    try:        
         encrypted_password = encrypt_password(password)
         query = text("UPDATE ms_merchant SET username=:username, email=:email, password=:password, no_rek=:no_rek WHERE id=:id")
         db.session.execute(query, {'id': id, 'username': username, 'email': email, 'password': encrypted_password, 'no_rek': no_rek})
@@ -117,6 +115,7 @@ def delete_merchant(id):
         return jsonify({'error': 'Failed to delete merchant', 'details': str(e)}), 500
 
 
+# login merchant
 @app.route('/login/merchant', methods=['POST'])
 def login_merchant():
     if check_login(session.get('user')):

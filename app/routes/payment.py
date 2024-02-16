@@ -1,15 +1,15 @@
 from flask import jsonify, request, Flask, session
 from app import app, db
 from sqlalchemy import text
-from app.middleware.loginMiddleware import check_login_customer
+from app.middleware.loginMiddleware import check_login
 
 
 # add payment
 @app.route('/payment', methods=['POST'])
 def create_payment():
-    if check_login_customer(session.get('customer'),session.get('level')) : 
+    if check_login_customer(session.get('user'),session.get('level')) : 
        return jsonify({'error': 'Access Forbidden'}), 403 
-    
+
     data = request.get_json()
     customer_id = data.get('customer_id')
     merchant_id = data.get('merchant_id')
@@ -31,7 +31,7 @@ def create_payment():
 # Get  payment
 @app.route('/payment/<int:id>', methods=['GET'])
 def get_payments_id(id):
-    if check_login_customer(session.get('customer'),session.get('level')) : 
+    if check_login(session.get('user')) : 
        return jsonify({'error': 'Access Forbidden'}), 403 
     
     try:
