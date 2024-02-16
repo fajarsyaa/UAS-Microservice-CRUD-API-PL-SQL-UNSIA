@@ -60,11 +60,11 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
   ```
   POST /customer
   ```
-  Body Permintaan:
+  Request:
   ```json
   {
     "username": "nama_pengguna_customer",
-    "email": "customer@example.com",
+    "email": "customer@gmail.com",
     "password": "password_customer",
     "no_rek": "1234567890"
   }
@@ -74,11 +74,11 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
   ```
   POST /merchant
   ```
-  Body Permintaan:
+  Request:
   ```json
   {
     "username": "nama_pengguna_merchant",
-    "email": "merchant@example.com",
+    "email": "merchant@gmail.com",
     "password": "password_merchant",
     "no_rek": "0987654321"
   }
@@ -88,10 +88,10 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
   ```
   POST /login/customer
   ```
-  Body Permintaan:
+  Request:
   ```json
   {
-    "email": "customer@example.com",
+    "email": "customer@gmail.com",
     "password": "password_customer"
   }
   ```
@@ -100,10 +100,10 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
   ```
   POST /login/merchant
   ```
-  Body Permintaan:
+  Request:
   ```json
   {
-    "email": "merchant@example.com",
+    "email": "merchant@gmail.com",
     "password": "password_merchant"
   }
   ```
@@ -112,7 +112,7 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
   ```
   POST /payment
   ```
-  Body Permintaan:
+  Request:
   ```json
   {
     "customer_id": 1,
@@ -125,11 +125,11 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
   ```
   PUT /customer/<customer_id>
   ```
-  Body Permintaan:
+  Request:
   ```json
   {
     "username": "username_baru",
-    "email": "email_baru@example.com",
+    "email": "email_baru@gmail.com",
     "password": "password_baru",
     "no_rek": "1234567890"
   }
@@ -140,11 +140,11 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
   ```
   PUT /merchant/<merchant_id>
   ```
-  Body Permintaan:
+  Request:
   ```json
   {
     "username": "username_baru",
-    "email": "email_baru@example.com",
+    "email": "email_baru@gmail.com",
     "password": "password_baru",
     "no_rek": "0987654321"
   }
