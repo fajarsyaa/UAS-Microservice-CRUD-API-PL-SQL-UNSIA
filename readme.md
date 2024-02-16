@@ -58,7 +58,8 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
 
 - **Registrasi customer:** 
   ```
-  POST /customer
+  Method    : POST 
+  URL       : /customer
   ```
   Request:
   ```json
@@ -72,7 +73,8 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
 
 - **Registrasi merchant:** 
   ```
-  POST /merchant
+  Method    : POST 
+  URL       : /merchant
   ```
   Request:
   ```json
@@ -86,7 +88,8 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
 
 - **Login customer:**
   ```
-  POST /login/customer
+  Method    : POST 
+  URL       : /login/customer
   ```
   Request:
   ```json
@@ -98,7 +101,8 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
 
 - **Login merchant:**
   ```
-  POST /login/merchant
+  Method    : POST 
+  URL       : /login/merchant
   ```
   Request:
   ```json
@@ -110,7 +114,8 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
 
 - **Membuat Pembayaran:**
   ```
-  POST /payment
+  Method    : POST 
+  URL       : /payment
   ```
   Request:
   ```json
@@ -123,7 +128,8 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
 
 - **Edit Customer:**
   ```
-  PUT /customer/<customer_id>
+  Method  : PUT 
+  URL     : /customer/<customer_id>
   ```
   Request:
   ```json
@@ -138,7 +144,8 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
 
 - **Edit Merchant:**
   ```
-  PUT /merchant/<merchant_id>
+  Method    : PUT 
+  URL       : /merchant/<merchant_id>
   ```
   Request:
   ```json
@@ -152,37 +159,44 @@ Setelah aplikasi dijalankan, Anda dapat menggunakan postman atau software sejeni
 
 - **Hapus Customer  berdasarkan ID:**
   ```
-  DELETE /customer/<payment_id>
+  Method    : DELETE 
+  URL       : /customer/<payment_id>
   ```
 
 - **Hapus Merchant berdasarkan ID:**
   ```
-  DELETE /merchant/<payment_id>
+  Method    : DELETE 
+  URL       : /merchant/<merchant_id>
   ```
 
 - **Mendapatkan data Pembayaran berdasarkan ID:**
   ```
-  GET /payment/<payment_id>
+  Method    : GET 
+  URL       : /payment/<payment_id>
   ```
 
 - **Mendapatkan data Semua Pembayaran:**
   ```
-  GET /payment
+  Method    : GET 
+  URL       : /payment  
   ```
 
 - **Mendapatkan data Log Pembayaran:**
   ```
-  GET /log/payment
+  Method    : GET 
+  URL       : /log/payment
   ```
 
 - **Mendapatkan data Log merchant:**
   ```
-  GET /log/merchant
+  Method    : GET 
+  URL       : /log/merchant
   ```
 
 - **Mendapatkan data Log customer:**
   ```
-  GET /log/customer
+  Method    : GET 
+  URL       : /log/customer
   ```
 
 ### Export collection postman
