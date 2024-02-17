@@ -19,6 +19,9 @@ def check_login_merchant(user, level):
 
 
 def check_login(user):
+    if user is None:        
+        return False
+
     if not user:        
         return False
 

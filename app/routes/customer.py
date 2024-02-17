@@ -57,6 +57,7 @@ def create_customer():
 # Get all customer
 @app.route('/customer', methods=['GET'])
 def get_customers():
+    
     if check_login_customer(session.get('user'),session.get('level')) : 
        return jsonify({'error': 'Access Forbidden'}), 403 
 
@@ -145,6 +146,9 @@ def login_customer():
 # logout
 @app.route('/logout', methods=['POST'])
 def logout():
-    session.pop('user', None)
-    session.pop('level', None)
-    return jsonify({'message': 'Logout'}), 200    
+    if session.get('user') and session.get('level'):
+        session.pop('user', None)
+        session.pop('level', None)
+        return jsonify({'message': 'Logout successful'}), 200
+    else:
+        return jsonify({'error': 'Not logged in'}), 401    
